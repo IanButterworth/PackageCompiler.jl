@@ -150,6 +150,13 @@ function default_sysimage_stdlibs()
             Base.PkgId(Base.UUID("9a3f8284-a2c9-5f02-9a11-845980a1fd5c"), "Random"),
             Base.PkgId(Base.UUID("6462fe0b-24de-5631-8697-dd941f90decc"), "Sockets"),
         ]
+        # In Julia 1.12 MbedTLS_jll is replaced by OpenSSL_jll, and JuliaSyntaxHighlighting is added
+        if VERSION >= v"1.12-"
+            push!(stdlibs, Base.PkgId(Base.UUID("ac6e5ff7-fb65-4e79-a425-ec3bc9c03011"), "JuliaSyntaxHighlighting"))
+            push!(stdlibs, Base.PkgId(Base.UUID("458c3c95-2e84-50aa-8efc-19380b2a3a95"), "OpenSSL_jll"))
+        else
+            push!(stdlibs, Base.PkgId(Base.UUID("c8ffd9c3-330d-5841-b78e-0817d7145fa1"), "MbedTLS_jll"))
+        end
         # Julia 1.13+ adds CompilerSupportLibraries_jll as a transitive dependency of OpenBLAS_jll
         if VERSION >= v"1.13-"
             push!(stdlibs, Base.PkgId(Base.UUID("e66e0078-7015-5450-92f7-15fbd957f2ae"), "CompilerSupportLibraries_jll"))
@@ -337,7 +344,7 @@ function create_fresh_base_sysimage(; cpu_target::String, sysimage_build_args::C
             write(new_sysimage_source_path, new_sysimage_content)
             try
                 cmd = addenv(`$(get_julia_cmd()) --cpu-target $cpu_target
-                    --sysimage=$tmp_corecompiler_sl
+                    --sysimage=$tmp_corecompiler_sl --threads=1
                     $sysimage_build_args --output-o=$tmp_sys_o
                     $new_sysimage_source_path $compiler_args`)
                 @debug "running $cmd"
