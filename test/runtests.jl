@@ -59,7 +59,8 @@ end
                               precompile_statements_file=joinpath.(@__DIR__, ["precompile_statements.jl",
                                                                               "precompile_statements2.jl"]),
                               script=script,
-                              sysimage_build_args = `-O1`
+                              sysimage_build_args = `-O1`,
+                              show_timing=true,
                               )
 
     # Check we can load sysimage and that Example is available in Main
