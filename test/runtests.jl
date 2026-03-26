@@ -103,7 +103,8 @@ end
                                     "ReturnType" => "wrong_return_type",
                                     "Error" => "erroring",
                                     "Undefined" => "undefined",
-                                    ])
+                                    ],
+                       show_timing=true)
             finally
             rm(tmp_app_source_dir; recursive=true)
             # Get rid of some local state
@@ -201,7 +202,7 @@ end
         create_library(tmp_lib_src_dir, lib_target_dir; incremental=incremental, force=true, filter_stdlibs=filter,
                     precompile_execution_file=joinpath(lib_source_dir, "build", "generate_precompile.jl"),
                     precompile_statements_file=joinpath(lib_source_dir, "build", "additional_precompile.jl"),
-                    lib_name=lib_name, version=v"1.0.0")
+                    lib_name=lib_name, version=v"1.0.0", show_timing=true)
         rm(tmp_lib_src_dir; recursive=true)
     end
 
