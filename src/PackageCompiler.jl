@@ -965,13 +965,13 @@ function create_app(package_dir::String,
         stdlibs = unique(vcat(stdlibs, map(pkg -> pkg.name, stdlibs_in_default_sysimage())))
     end
     @timeit TO "bundle" begin
-        bundle_julia_libraries(app_dir, stdlibs)
-        bundle_julia_libexec(ctx, app_dir)
-        bundle_julia_executable(app_dir)
-        bundle_artifacts(ctx, app_dir; include_lazy_artifacts)
-        bundle_project(ctx, app_dir)
-        include_preferences && bundle_preferences(ctx, app_dir)
-        bundle_cert(app_dir)
+        @timeit TO "julia libraries" bundle_julia_libraries(app_dir, stdlibs)
+        @timeit TO "libexec" bundle_julia_libexec(ctx, app_dir)
+        @timeit TO "executable" bundle_julia_executable(app_dir)
+        @timeit TO "artifacts" bundle_artifacts(ctx, app_dir; include_lazy_artifacts)
+        @timeit TO "project" bundle_project(ctx, app_dir)
+        include_preferences && @timeit TO "preferences" bundle_preferences(ctx, app_dir)
+        @timeit TO "cert" bundle_cert(app_dir)
     end
 
     # Sysimage always goes in lib/julia/ (this is hardcoded in the Julia binary)
@@ -1195,13 +1195,13 @@ function create_library(package_or_project::String,
         stdlibs = unique(vcat(stdlibs, map(pkg -> pkg.name, stdlibs_in_default_sysimage())))
     end
     @timeit TO "bundle" begin
-        bundle_julia_libraries(dest_dir, stdlibs)
-        bundle_julia_libexec(ctx, dest_dir)
-        bundle_artifacts(ctx, dest_dir; include_lazy_artifacts)
-        bundle_headers(dest_dir, header_files)
-        bundle_project(ctx, dest_dir)
-        include_preferences && bundle_preferences(ctx, dest_dir)
-        bundle_cert(dest_dir)
+        @timeit TO "julia libraries" bundle_julia_libraries(dest_dir, stdlibs)
+        @timeit TO "libexec" bundle_julia_libexec(ctx, dest_dir)
+        @timeit TO "artifacts" bundle_artifacts(ctx, dest_dir; include_lazy_artifacts)
+        @timeit TO "headers" bundle_headers(dest_dir, header_files)
+        @timeit TO "project" bundle_project(ctx, dest_dir)
+        include_preferences && @timeit TO "preferences" bundle_preferences(ctx, dest_dir)
+        @timeit TO "cert" bundle_cert(dest_dir)
     end
 
     lib_dir = Sys.iswindows() ? joinpath(dest_dir, "bin") : joinpath(dest_dir, "lib")
